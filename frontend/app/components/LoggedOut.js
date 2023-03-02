@@ -16,10 +16,7 @@ const LoggedOut = () => {
         password,
       });
       if (response.data) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("username", response.data.username);
-        localStorage.setItem("avatar", response.data.avatar);
-        dispatch({ type: "login" });
+        dispatch({ type: "login", data: response.data });
       }
     } catch (error) {
       console.log("problem happened");

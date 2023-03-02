@@ -1,9 +1,12 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import dispatchContext from "../contexts/dispatchContext";
+import stateContext from "../contexts/stateContext";
 
 const LoggedIn = () => {
   const dispatch = useContext(dispatchContext);
+  const state = useContext(stateContext);
+  const navigate = useNavigate();
   return (
     <div className="flex-row my-3 my-md-0">
       <a href="#" className="text-white mr-2 header-search-icon">
@@ -13,19 +16,16 @@ const LoggedIn = () => {
         <i className="fas fa-comment"></i>
         <span className="chat-count-badge text-white"> </span>
       </span>
-      <a href="#" className="mr-2">
-        <img
-          className="small-header-avatar"
-          src={localStorage.getItem("avatar")}
-        />
-      </a>
+      <Link to={`/profile/${state.user.username}`} className="mr-2">
+        <img className="small-header-avatar" src={state.user.avatar} />
+      </Link>
       <Link className="btn btn-sm btn-success mr-2" to="/create-post">
         Create Post
       </Link>
       <button
         onClick={() => {
           dispatch({ type: "logout" });
-          localStorage.clear();
+          navigate("/");
         }}
         className="btn btn-sm btn-secondary"
       >
