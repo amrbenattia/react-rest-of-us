@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import LoadingDots from "./LoadingDots";
 import Page from "./Page";
+import ReactMarkdown from "react-markdown";
 
 const ViewSinglePost = () => {
   const [post, setPost] = useState([]);
@@ -22,7 +23,7 @@ const ViewSinglePost = () => {
       }
     };
     fetchPost();
-
+    //clean if request got canceled
     return () => request.cancel();
   }, []);
 
@@ -58,7 +59,27 @@ const ViewSinglePost = () => {
         on {formattedDate}
       </p>
 
-      <div className="body-content">{post.body}</div>
+      <div className="body-content">
+        <ReactMarkdown
+          children={post.body}
+          allowElements={[
+            "p",
+            "br",
+            "strong",
+            "h1",
+            "h2",
+            "h3",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "em",
+            "ul",
+            "ol",
+            "li",
+          ]}
+        />
+      </div>
     </Page>
   );
 };

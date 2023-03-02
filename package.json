@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "immer": "^9.0.19",
+    "react-markdown": "^8.0.5",
     "use-immer": "^0.8.1"
   }
 }
