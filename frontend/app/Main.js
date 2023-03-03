@@ -17,6 +17,9 @@ import myContext from "./contexts/myContext";
 import stateContext from "./contexts/stateContext";
 import dispatchContext from "./contexts/dispatchContext";
 import Profile from "./components/Profile";
+import EditPost from "./components/EditPost";
+import NotFound from "./components/NotFound";
+import Search from "./components/Search";
 
 Axios.defaults.baseURL = "http://localhost:8888";
 
@@ -29,6 +32,7 @@ function Main() {
       username: localStorage.getItem("username"),
       avatar: localStorage.getItem("avatar"),
     },
+    isSearch: false,
   };
   const reducer = (state, action) => {
     // action to setIsLoggedIn or setFlashMessages
@@ -39,18 +43,35 @@ function Main() {
           isLoggedIn: true,
           user: action.data, // setState from response
           flashMessages: state.flashMessages,
+          isSearch: state.isSearch,
         };
       case "logout":
         return {
           isLoggedIn: false,
           user: state.user,
           flashMessages: state.flashMessages,
+          isSearch: state.isSearch,
         };
       case "flashMessage":
         return {
           isLoggedIn: state.isLoggedIn,
           user: state.user,
           flashMessages: [...state.flashMessages, action.value],
+          isSearch: state.isSearch,
+        };
+      case "openSearch":
+        return {
+          isSearch: true,
+          isLoggedIn: state.isLoggedIn,
+          user: state.user,
+          flashMessages: state.flashMessages,
+        };
+      case "closeSearch":
+        return {
+          isSearch: false,
+          isLoggedIn: state.isLoggedIn,
+          user: state.user,
+          flashMessages: state.flashMessages,
         };
     }
   };
@@ -78,10 +99,13 @@ function Main() {
             />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/posts/:id" element={<ViewSinglePost />} />
+            <Route path="/posts/:id/edit" element={<EditPost />} />
             <Route path="/about-us" element={<About />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/profile/:username" element={<Profile />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
+          {state.isSearch && <Search />}
           <Footer />
         </BrowserRouter>
       </dispatchContext.Provider>

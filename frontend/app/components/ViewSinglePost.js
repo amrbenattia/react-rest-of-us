@@ -1,13 +1,20 @@
 import Axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import LoadingDots from "./LoadingDots";
 import Page from "./Page";
 import ReactMarkdown from "react-markdown";
+import NotFound from "./NotFound";
+import stateContext from "../contexts/stateContext";
+import dispatchContext from "../contexts/dispatchContext";
 
 const ViewSinglePost = () => {
   const [post, setPost] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const appState = useContext(stateContext);
+  const appDispatch = useContext(dispatchContext);
+
+  const navigate = useNavigate();
   const { id } = useParams();
   useEffect(() => {
     const request = Axios.CancelToken.source();
@@ -27,6 +34,9 @@ const ViewSinglePost = () => {
     return () => request.cancel();
   }, []);
 
+  if (!isLoading && !post) {
+    return <NotFound />;
+  }
   if (isLoading) {
     return <LoadingDots />;
   }
@@ -34,18 +44,57 @@ const ViewSinglePost = () => {
   const formattedDate = `${
     date.getMonth() + 1
   }/${date.getDay()}/${date.getFullYear()}`;
+
+  const isOwner = () => {
+    if (appState.isLoggedIn) {
+      return appState.user.username === post.author.username;
+    }
+    return false;
+  };
+
+  const handleDelete = async () => {
+    const sureToDelete = window.confirm(
+      "Are you sure you want to progress the the post deletion"
+    );
+    if (sureToDelete) {
+      try {
+        const response = await Axios.delete(`/post/${id}`, {
+          data: { token: appState.user.token },
+        });
+        if ((response.data = "success")) {
+          appDispatch({
+            type: "flashMessage",
+            value: "Congrats, you successfully created a post.",
+          });
+          navigate(`/profile/${appState.user.username}`);
+        }
+      } catch (error) {
+        console.log("Error encounter while deletion" + error);
+      }
+    }
+  };
   return (
     <Page title={post.title}>
       <div className="d-flex justify-content-between">
         <h2>{post.title}</h2>
-        <span className="pt-2">
-          <a href="#" className="text-primary mr-2" title="Edit">
-            <i className="fas fa-edit"></i>
-          </a>
-          <a className="delete-post-button text-danger" title="Delete">
-            <i className="fas fa-trash"></i>
-          </a>
-        </span>
+        {isOwner() && (
+          <span className="pt-2">
+            <Link
+              to={`/posts/${post._id}/edit`}
+              className="text-primary mr-2"
+              title="Edit"
+            >
+              <i className="fas fa-edit"></i>
+            </Link>
+            <a
+              onClick={handleDelete}
+              className="delete-post-button text-danger"
+              title="Delete"
+            >
+              <i className="fas fa-trash"></i>
+            </a>
+          </span>
+        )}
       </div>
 
       <p className="text-muted small mb-4">

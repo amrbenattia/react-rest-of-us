@@ -2,6 +2,7 @@ import Axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import LoadingDots from "./LoadingDots";
+import NotFound from "./NotFound";
 
 const ProfilePosts = ({ avatar }) => {
   const [posts, setPosts] = useState([]);
@@ -20,6 +21,9 @@ const ProfilePosts = ({ avatar }) => {
     fetchPosts();
   }, []);
 
+  if (!isLoading && !posts) {
+    return <NotFound />;
+  }
   if (isLoading) {
     return <LoadingDots />;
   }
