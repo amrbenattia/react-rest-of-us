@@ -16,6 +16,8 @@ const ViewSinglePost = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
+
+  // request depend on id when search and select a post among search
   useEffect(() => {
     const request = Axios.CancelToken.source();
     const fetchPost = async () => {
@@ -32,7 +34,7 @@ const ViewSinglePost = () => {
     fetchPost();
     //clean if request got canceled
     return () => request.cancel();
-  }, []);
+  }, [id]);
 
   if (!isLoading && !post) {
     return <NotFound />;

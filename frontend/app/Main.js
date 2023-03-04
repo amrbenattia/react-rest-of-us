@@ -2,7 +2,6 @@ import React, { useReducer, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// My Components
 import Header from "./components/Header";
 import HomeGuest from "./components/HomeGuest";
 import Footer from "./components/Footer";
@@ -13,13 +12,13 @@ import CreatePost from "./components/CreatePost";
 import Axios from "axios";
 import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
-import myContext from "./contexts/myContext";
 import stateContext from "./contexts/stateContext";
 import dispatchContext from "./contexts/dispatchContext";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
 import Search from "./components/Search";
+import { CSSTransition } from "react-transition-group";
 
 Axios.defaults.baseURL = "http://localhost:8888";
 
@@ -105,7 +104,14 @@ function Main() {
             <Route path="/profile/:username" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          {state.isSearch && <Search />}
+          <CSSTransition
+            timeout={330}
+            in={state.isSearch}
+            classNames="search-overlay"
+            unmountOnExit
+          >
+            <Search />
+          </CSSTransition>
           <Footer />
         </BrowserRouter>
       </dispatchContext.Provider>

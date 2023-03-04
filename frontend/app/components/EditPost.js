@@ -32,7 +32,7 @@ const EditPost = () => {
         return {
           ...state,
           title: { ...state.title, value: action.value.title },
-          body: { ...state.body, value: action.value.title },
+          body: { ...state.body, value: action.value.body },
           isFetching: false,
         };
       case "changeTitle":
@@ -98,6 +98,7 @@ const EditPost = () => {
   const appState = useContext(stateContext);
   const appDispatch = useContext(dispatchContext);
   const navigate = useNavigate();
+
   useEffect(() => {
     const request = Axios.CancelToken.source();
     const fetchPost = async () => {
